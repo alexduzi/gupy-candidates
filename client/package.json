@@ -11,8 +11,14 @@
     }
   },
   "dependencies": {
+    "@material-ui/icons": "^1.0.0-beta.42",
+    "apisauce": "^0.14.3",
     "axios": "^0.16.2",
+    "dotenv": "^5.0.1",
+    "material-ui": "^1.0.0-beta.42",
+    "material-ui-next-datepicker": "^1.0.6",
     "materialize-css": "^0.100.2",
+    "moment": "^2.22.1",
     "react": "^16.0.0-alpha.13",
     "react-dom": "^16.0.0-alpha.13",
     "react-redux": "^5.0.5",

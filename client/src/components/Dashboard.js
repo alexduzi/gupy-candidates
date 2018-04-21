@@ -1,18 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import BlogList from './blogs/BlogList';
+// import { connect } from 'react-redux';
+import CandidateList from './candidates/CandidateList';
+import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 
-const Dashboard = () => {
+const styles = theme => ({
+  fab: {
+    position: 'absolute',
+    bottom: '10px',
+    right: '10px',
+  },
+});
+
+const Dashboard = (props) => {
+
   return (
     <div>
-      <BlogList />
-      <div className="fixed-action-btn">
-        <Link to="/blogs/new" className="btn-floating btn-large red">
-          <i className="material-icons">add</i>
-        </Link>
-      </div>
+      <CandidateList />
     </div>
   );
 };
 
-export default Dashboard;
+Dashboard.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+
+
+export default withStyles(styles)(Dashboard);

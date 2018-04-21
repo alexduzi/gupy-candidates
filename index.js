@@ -1,33 +1,32 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cookieSession = require('cookie-session');
-const passport = require('passport');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+const cors = require('cors');
 const keys = require('./config/keys');
 
-require('./models/User');
-require('./models/Blog');
-require('./services/passport');
-require('./services/cache');
+require('./models/candidate');
+require('./models/experience');
 
 mongoose.Promise = global.Promise;
+
+if (process.env.NODE_ENV === 'dev') {
+  mongoose.set('debug', true);
+}
+
 mongoose.connect(keys.mongoURI, { useMongoClient: true });
 
 const app = express();
 
 app.use(bodyParser.json());
-app.use(
-  cookieSession({
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    keys: [keys.cookieKey]
-  })
-);
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(helmet());
+app.use(compression());
+app.use(cors());
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
-require('./routes/authRoutes')(app);
-require('./routes/blogRoutes')(app);
-require('./routes/uploadRoutes')(app);
+require('./routes/candidateRoutes')(app);
 
 if (['production', 'ci'].includes(process.env.NODE_ENV)) {
   app.use(express.static('client/build'));

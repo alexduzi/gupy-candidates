@@ -1,44 +1,87 @@
-import axios from 'axios';
-import { FETCH_USER, FETCH_BLOGS, FETCH_BLOG } from './types';
+import candidatesApi from '../services/candidatesApi';
+import {
+  FETCH_CANDIDATES,
+  FETCH_CANDIDATES_ERROR,
+  FETCH_CANDIDATES_LOADING,
+  CANDIDATES_INSERT,
+  CANDIDATES_INSERT_LOADING,
+  CANDIDATES_INSERT_ERROR,
+  CANDIDATES_UPDATE,
+  CANDIDATES_UPDATE_LOADING,
+  CANDIDATES_UPDATE_ERROR,
+  CANDIDATES_DELETE,
+  CANDIDATES_DELETE_LOADING,
+  CANDIDATES_DELETE_ERROR
+} from './types';
 
-export const fetchUser = () => async dispatch => {
-  const res = await axios.get('/api/current_user');
+const api = candidatesApi.create();
 
-  dispatch({ type: FETCH_USER, payload: res.data });
+export const fetchCandidates = () => async dispatch => {
+  dispatch({ type: FETCH_CANDIDATES_LOADING, payload: true });
+
+  const res = await api.getCandidates();
+
+  if (res.ok) {
+
+    dispatch({ type: FETCH_CANDIDATES, payload: res.data.candidates });
+  } else {
+    dispatch({ type: FETCH_CANDIDATES_ERROR, payload: [] });
+  }
+
 };
 
-export const handleToken = token => async dispatch => {
-  const res = await axios.post('/api/stripe', token);
+export const fetchCandidate = (id) => async dispatch => {
+  const res = await api.getCandidate(id);
 
-  dispatch({ type: FETCH_USER, payload: res.data });
+  if (res.ok) {
+
+    dispatch({ type: FETCH_CANDIDATES, payload: res.data.candidate });
+  } else {
+    dispatch({ type: 'FETCH_CANDIDATES_ERROR', payload: [] });
+  }
+
 };
 
-export const submitBlog = (values, file, history) => async dispatch => {
-  const uploadConfig = await axios.get('/api/upload');
+export const insertCandidate = (candidate) => async dispatch => {
+  dispatch({ type: CANDIDATES_INSERT_LOADING, payload: true });
 
-  const upload = await axios.put(uploadConfig.data.url, file, {
-    headers: {
-      'Content-Type': file.type
-    }
-  });
+  const res = await api.insertCandidate(candidate);
 
-  const res = await axios.post('/api/blogs', {
-    ...values,
-    imageUrl: uploadConfig.data.key
-  });
+  if (res.ok) {
 
-  history.push('/blogs');
-  dispatch({ type: FETCH_BLOG, payload: res.data });
+    dispatch({ type: CANDIDATES_INSERT, payload: res.data });
+  } else {
+    dispatch({ type: CANDIDATES_INSERT_ERROR, payload: true });
+  }
+
 };
 
-export const fetchBlogs = () => async dispatch => {
-  const res = await axios.get('/api/blogs');
+export const updateCandidate = (candidate) => async dispatch => {
+  dispatch({ type: CANDIDATES_UPDATE_LOADING, payload: true });
 
-  dispatch({ type: FETCH_BLOGS, payload: res.data });
+  const res = await api.updateCandidate(candidate);
+
+  if (res.ok) {
+
+    dispatch({ type: CANDIDATES_UPDATE, payload: res.data });
+  } else {
+    dispatch({ type: CANDIDATES_UPDATE_ERROR, payload: true });
+  }
+
 };
 
-export const fetchBlog = id => async dispatch => {
-  const res = await axios.get(`/api/blogs/${id}`);
+export const deleteCandidate = (candidate) => async dispatch => {
+  dispatch({ type: CANDIDATES_DELETE_LOADING, payload: true });
 
-  dispatch({ type: FETCH_BLOG, payload: res.data });
+  const res = await api.deleteCandidate(candidate._id);
+
+  if (res.ok) {
+
+    dispatch({ type: CANDIDATES_DELETE, payload: [] });
+
+    dispatch(fetchCandidates());
+  } else {
+    dispatch({ type: CANDIDATES_DELETE_ERROR, payload: true });
+  }
+
 };

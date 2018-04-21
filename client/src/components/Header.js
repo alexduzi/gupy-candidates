@@ -1,50 +1,44 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+
+import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+
+const styles = {
+  root: {
+    flexGrow: 1,
+  },
+};
 
 class Header extends Component {
-  renderContent() {
-    switch (this.props.auth) {
-      case null:
-        return;
-      case false:
-        return (
-          <li>
-            <a href={'/auth/google'}>Login With Google</a>
-          </li>
-        );
-      default:
-        return [
-          <li key="3" style={{ margin: '0 10px' }}>
-            <Link to="/blogs">My Blogs</Link>
-          </li>,
-          <li key="2">
-            <a href={'/auth/logout'}>Logout</a>
-          </li>
-        ];
-    }
-  }
 
   render() {
+    const { classes } = this.props;
+
     return (
-      <nav className="indigo">
-        <div className="nav-wrapper">
-          <Link
-            to={this.props.auth ? '/blogs' : '/'}
-            className="left brand-logo"
-            style={{ marginLeft: '10px' }}
-          >
-            Blogster
-          </Link>
-          <ul className="right">{this.renderContent()}</ul>
-        </div>
-      </nav>
+      <div className={classes.root}>
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <Typography variant="title" color="inherit">
+              <Button href="/" color="primary" className={classes.button}>
+                HR Candidates Manager
+              </Button>
+              <Button href="/candidate/new" color="secondary" className={classes.button}>
+                New Candidate
+              </Button>
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      </div>
     );
   }
 }
 
-function mapStateToProps({ auth }) {
-  return { auth };
-}
+Header.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
 
-export default connect(mapStateToProps)(Header);
+export default withStyles(styles)(Header);
