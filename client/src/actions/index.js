@@ -11,7 +11,8 @@ import {
   CANDIDATES_UPDATE_ERROR,
   CANDIDATES_DELETE,
   CANDIDATES_DELETE_LOADING,
-  CANDIDATES_DELETE_ERROR
+  CANDIDATES_DELETE_ERROR,
+  CANDIDATES_CANCEL
 } from './types';
 
 const api = candidatesApi.create();
@@ -49,7 +50,7 @@ export const insertCandidate = (candidate) => async dispatch => {
 
   if (res.ok) {
 
-    dispatch({ type: CANDIDATES_INSERT, payload: res.data });
+    dispatch({ type: CANDIDATES_INSERT, payload: res.data.candidate });
   } else {
     dispatch({ type: CANDIDATES_INSERT_ERROR, payload: true });
   }
@@ -85,3 +86,23 @@ export const deleteCandidate = (candidate) => async dispatch => {
   }
 
 };
+
+export const insertExperiences = (experiences) => async dispatch => {
+  dispatch({ type: CANDIDATES_DELETE_LOADING, payload: true });
+
+  const res = await api.deleteCandidate(0);
+
+  if (res.ok) {
+
+    dispatch({ type: CANDIDATES_DELETE, payload: [] });
+
+    dispatch(fetchCandidates());
+  } else {
+    dispatch({ type: CANDIDATES_DELETE_ERROR, payload: true });
+  }
+
+};
+
+export const cancelCandidateInsertion = () => async dispatch => {
+  dispatch({ type: CANDIDATES_CANCEL, payload: true });
+}

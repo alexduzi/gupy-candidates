@@ -25,13 +25,15 @@ module.exports = app => {
 
     const { name, lastName, email, birthDate, age, title } = req.body;
 
-    const candidate = new Candidate({ name, lastName, email, birthDate, age, title });
+    const newCandidate = new Candidate({ name, lastName, email, birthDate, age, title });
 
     try {
 
-      await candidate.save();
+      await newCandidate.save();
 
-      res.status(200).send({ ok: !candidate.isNew });
+      const candidate = await Candidate.findOne({ _id: newCandidate._id });
+
+      res.status(200).send({ candidate });
     } catch (e) {
 
     }

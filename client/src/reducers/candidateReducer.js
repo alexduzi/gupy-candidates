@@ -10,7 +10,8 @@ import {
   CANDIDATES_UPDATE_ERROR,
   CANDIDATES_DELETE,
   CANDIDATES_DELETE_LOADING,
-  CANDIDATES_DELETE_ERROR
+  CANDIDATES_DELETE_ERROR,
+  CANDIDATES_CANCEL
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -28,7 +29,8 @@ const INITIAL_STATE = {
   deleteErrorMessage: '',
 
   candidatesLoading: false,
-  list: []
+  list: [],
+  candidate: undefined
 }
 
 export default function(state = INITIAL_STATE, action) {
@@ -40,7 +42,7 @@ export default function(state = INITIAL_STATE, action) {
 
     case CANDIDATES_INSERT:
 
-      return { ...state, insertLoading: false, insertError: false, insertErrorMessage: '' };
+      return { ...state, insertLoading: false, insertError: false, insertErrorMessage: '', candidate: action.payload };
 
     case CANDIDATES_INSERT_ERROR:
 
@@ -81,6 +83,10 @@ export default function(state = INITIAL_STATE, action) {
     case FETCH_CANDIDATES_ERROR:
 
       return { ...state, list: [], candidatesLoading: false };
+
+    case CANDIDATES_CANCEL:
+
+      return { ...state, candidate: undefined };
 
     default:
       return state;

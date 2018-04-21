@@ -6,12 +6,14 @@ import * as actions from '../actions';
 
 import Header from './Header';
 import Dashboard from './Dashboard';
-import CandidateNew from './candidates/CandidateNew';
+import CandidateForm from './candidates/CandidateForm';
 import CandidateShow from './candidates/CandidateShow';
+import ExperienceForm from './candidates/ExperienceForm';
 
 class App extends Component {
+
   componentDidMount() {
-    
+
   }
 
   render() {
@@ -22,7 +24,8 @@ class App extends Component {
           <div>
             <Header />
             <Switch>
-              <Route path="/candidate/new" component={CandidateNew} />
+              <Route path="/candidate/new" component={CandidateForm} />
+              <Route path="/experience/candidate/:_id?" component={ExperienceForm} />
               <Route exact path="/candidate/:_id" component={CandidateShow} />
               <Route path="/" component={Dashboard} />
             </Switch>
