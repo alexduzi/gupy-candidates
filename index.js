@@ -12,9 +12,7 @@ require('./models/experience');
 
 mongoose.Promise = global.Promise;
 
-if (process.env.NODE_ENV === 'dev') {
-  mongoose.set('debug', true);
-}
+mongoose.set('debug', true);
 
 mongoose.connect(keys.mongoURI, { useMongoClient: true });
 

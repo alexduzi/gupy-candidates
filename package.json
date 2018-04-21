@@ -10,6 +10,7 @@
     "start": "node index.js",
     "server": "nodemon index.js --ignore tests",
     "client": "npm run start --prefix client",
+    "gupy": "concurrently \"cross-env NODE_ENV=dev npm run server\" \"npm run client\"",
     "dev": "concurrently \"cross-env NODE_ENV=ci npm run server\" \"npm run client\"",
     "build": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
     "heroku-postbuild": "npm run build",
