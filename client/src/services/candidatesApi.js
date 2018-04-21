@@ -1,4 +1,5 @@
 import apisauce from 'apisauce';
+import queryString from 'query-string';
 
 const create = (baseURL = process.env.REACT_APP_CANDIDATES_API_URL) => {
 
@@ -10,7 +11,7 @@ const create = (baseURL = process.env.REACT_APP_CANDIDATES_API_URL) => {
     timeout: 10000
   })
 
-  const getCandidates = () => api.get('candidate');
+  const getCandidates = (email, name) => api.get(`candidate?${queryString.stringify({ email, name })}`);
 
   const getCandidate = (id) => api.get(`candidate/${id}`);
 
@@ -20,7 +21,11 @@ const create = (baseURL = process.env.REACT_APP_CANDIDATES_API_URL) => {
 
   const deleteCandidate = (id) => api.delete(`candidate/${id}`);
 
-  const insertExperiences = ({ id, experiences }) => api.get(`candidate/${id}/experience`, { experiences });
+  const insertExperiences = ({ id, experiences }) => api.post(`candidate/${id}/experience`, { experiences });
+
+  const updateExperiences = ({ id, experiences }) => api.put(`candidate/${id}/experience`, { experiences });
+
+  const deleteExperience = ({ id, experienceId }) => api.delete(`candidate/${id}/experience/${experienceId}`);
 
   return {
     getCandidates,
@@ -28,7 +33,9 @@ const create = (baseURL = process.env.REACT_APP_CANDIDATES_API_URL) => {
     insertCandidate,
     updateCandidate,
     deleteCandidate,
-    insertExperiences
+    insertExperiences,
+    updateExperiences,
+    deleteExperience
   };
 }
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
 import IconButton from 'material-ui/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
@@ -28,6 +27,8 @@ class CandidateMessage extends React.Component {
     }
 
     this.setState({ open: false });
+
+    this.props.onCandidateMessageClose();
   };
 
   render() {
@@ -39,7 +40,7 @@ class CandidateMessage extends React.Component {
             vertical: 'bottom',
             horizontal: 'right',
           }}
-          open={this.state.open}
+          open={this.props.messageOpen || this.state.open}
           autoHideDuration={6000}
           onClose={this.handleClose}
           SnackbarContentProps={{
@@ -66,9 +67,8 @@ class CandidateMessage extends React.Component {
   }
 }
 
-SimpleSnackbar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  message: PropTypes.object.isRequired
+CandidateMessage.propTypes = {
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(CandidateMessage);

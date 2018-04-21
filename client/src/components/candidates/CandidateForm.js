@@ -3,20 +3,16 @@ import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import { withRouter } from "react-router-dom";
 import Button from 'material-ui/Button';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
 import TextField from 'material-ui/TextField';
 import * as candidateActions from '../../actions';
 import { CircularProgress } from 'material-ui/Progress';
 import moment from 'moment';
-import Reorder, {
-  reorder,
-  reorderImmutable,
-  reorderFromTo,
-  reorderFromToImmutable
-} from 'react-reorder';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
+import MomentUtils from 'material-ui-pickers/utils/moment-utils';
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
+import { DatePicker } from 'material-ui-pickers';
+import CandidateMessage from './CandidateMessage';
 
 const styles = theme => ({
   root: {
@@ -56,9 +52,10 @@ class CandidateForm extends Component {
     name: '',
     lastName: '',
     email: '',
-    birthDate: moment().format('yyyy-dd-MM'),
+    birthDate: moment(),
     age: '',
     title: '',
+    phoneNumber: '',
 
     experiences: [
       {
@@ -71,6 +68,9 @@ class CandidateForm extends Component {
       }
     ],
 
+    candidateId: undefined,
+    updating: false,
+
     nameError: false,
     lastNameError: false,
     emailError: false,
@@ -79,11 +79,23 @@ class CandidateForm extends Component {
   };
 
   componentWillMount() {
+    const { _id } = this.props.match.params;
 
+    if (_id) {
+      this.props.fetchCandidate(_id).then(() => this.setState({ candidateId: _id, updating: true }));
+    }
+  }
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    const { candidate } = nextProps;
+
+    if (candidate) {
+      this.setState({ ...candidate });
+    }
   }
 
   onSubmitHandler = () => {
-    const { name, lastName, email, birthDate, age, title } = this.state;
+    const { name, lastName, email, birthDate, age, title, updating, candidateId, phoneNumber } = this.state;
 
     if (!name || name === '') {
       this.setState({ nameError: true });
@@ -102,13 +114,24 @@ class CandidateForm extends Component {
       return;
     }
 
-    this.props.insertCandidate({ name, lastName, email, birthDate, age, title });
-      // .then(() => this.props.history.push('/'));
+    if (updating) {
+      this.props.updateCandidate({ name, lastName, email, birthDate, age, title, _id: candidateId, phoneNumber });
+    } else {
+      this.props.insertCandidate({ name, lastName, email, birthDate, age, title, phoneNumber });
+    }
 
+    this.setState({ messageOpen: true });
+  }
+
+  onCandidateMessageClose = () => {
+    this.setState({ messageOpen: false });
   }
 
   onCancelHandler = () => {
-    this.props.cancelCandidateInsertion().then(() => this.props.history.push('/'));
+
+    this.props.cancelCandidateInsertion();
+
+    this.props.history.push('/');
   }
 
   handleChange = name => event => {
@@ -118,12 +141,16 @@ class CandidateForm extends Component {
     });
   };
 
+  handleDateChange = (date) => {
+    this.setState({ birthDate: date });
+  }
+
   renderAddExperienceButton = () => {
     const { classes } = this.props;
 
-    if (this.props.candidate) {
+    if (this.state.updating || this.props.candidate) {
       return (
-        <Button variant="raised" size="large" className={classes.button} href={`/experience/candidate`}>
+        <Button variant="raised" size="large" className={classes.button} href={`/candidate/experience/${this.props.candidate._id}`}>
           Add Experiences
         </Button>
       );
@@ -174,6 +201,16 @@ class CandidateForm extends Component {
                   margin="normal"
                 />
                 <TextField
+                  error={this.state.phoneNumberError}
+                  required
+                  id="phoneNumber"
+                  label="Phone Number"
+                  value={this.state.phoneNumber}
+                  onChange={this.handleChange('phoneNumber')}
+                  className={classes.textField}
+                  margin="normal"
+                />
+                <TextField
                   error={this.state.emailError}
                   required
                   id="email"
@@ -201,17 +238,16 @@ class CandidateForm extends Component {
                   className={classes.textField}
                   margin="normal"
                 />
-                <TextField
-                  id="birthDate"
-                  label="Birth Date"
-                  type="date"
-                  value={this.state.birthDate}
-                  onChange={this.handleChange('birthDate')}
-                  className={classes.textField}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
+                <MuiPickersUtilsProvider utils={MomentUtils}>
+                  <DatePicker
+                    keyboard
+                    format="DD/MM/YYYY"
+                    label="Birth Date"
+                    maxDateMessage="Date must be less than today"
+                    value={this.state.birthDate}
+                    onChange={this.handleDateChange}
+                  />
+                </MuiPickersUtilsProvider>
                 <Button variant="raised" size="large" className={classes.button} onClick={this.onCancelHandler}>
                   Cancel
                 </Button>
@@ -219,6 +255,7 @@ class CandidateForm extends Component {
                   { this.props.insertLoading ? <CircularProgress className={classes.progress} color="secondary" /> : 'Save'}
                 </Button>
                 {this.renderAddExperienceButton()}
+                <CandidateMessage messageOpen={this.state.messageOpen} message="Candidate saved!" onCandidateMessageClose={this.onCandidateMessageClose} />
               </Paper>
             </Grid>
           </Grid>

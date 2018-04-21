@@ -1,6 +1,7 @@
 import React from 'react';
 // import { connect } from 'react-redux';
 import CandidateList from './candidates/CandidateList';
+import CandidateSearchBar from './candidates/CandidateSearchBar';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 
@@ -16,6 +17,7 @@ const Dashboard = (props) => {
 
   return (
     <div>
+      <CandidateSearchBar />
       <CandidateList />
     </div>
   );

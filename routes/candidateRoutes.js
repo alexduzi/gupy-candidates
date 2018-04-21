@@ -7,7 +7,20 @@ module.exports = app => {
 
   app.get('/api/candidate', async (req, res) => {
 
-    const candidates = await Candidate.find({ }).populate('experiences');
+    let { email, name } = req.query;
+
+    if (email === '') email = undefined;
+    if (name === '') name = undefined;
+
+    let candidates = [];
+
+    console.log('email', email)
+
+    if (!email && !name) {
+      candidates = await Candidate.find({ }).populate('experiences');
+    } else {
+      candidates = await Candidate.find({ $or: [ { email: new RegExp(email, 'i'), name: new RegExp(name, 'i') } ] } ).populate('experiences');
+    }
 
     res.status(200).send({ candidates });
   });
@@ -16,16 +29,16 @@ module.exports = app => {
 
     const { candidateId } = req.params;
 
-    const candidates = await Candidate.find({ _id: candidateId }).populate('experiences');
+    const candidate = await Candidate.findOne({ _id: candidateId }).populate('experiences');
 
-    res.status(200).send({ candidates });
+    res.status(200).send({ candidate });
   });
 
   app.post('/api/candidate', async (req, res) => {
 
-    const { name, lastName, email, birthDate, age, title } = req.body;
+    const { name, lastName, email, birthDate, age, title, phoneNumber } = req.body;
 
-    const newCandidate = new Candidate({ name, lastName, email, birthDate, age, title });
+    const newCandidate = new Candidate({ name, lastName, email, birthDate, age, title, phoneNumber });
 
     try {
 
@@ -40,20 +53,12 @@ module.exports = app => {
 
   });
 
-  app.post('/api/candidate/:candidateId/experience', async (req, res) => {
-
-    const { candidateId } = req.params;
-    const { experiences } = req.body;
-
-    res.status(200).send({ candidates });
-  });
-
   app.put('/api/candidate', async (req, res) => {
 
-    const { candidate } = req.body;
+    const { name, lastName, email, birthDate, age, title, _id, phoneNumber } = req.body;
 
     try {
-      await Candidate.findByIdAndUpdate(candidate._id, { ...candidate });
+      await Candidate.findByIdAndUpdate(_id, { name, lastName, email, birthDate, age, title, phoneNumber });
 
       res.status(200).send({ });
     } catch (e) {

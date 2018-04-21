@@ -64,6 +64,7 @@ class CandidateList extends Component {
         <TableRow key={candidate._id}>
           <TableCell>{`${candidate.name} ${candidate.lastName}`}</TableCell>
           <TableCell>{candidate.title}</TableCell>
+          <TableCell>{candidate.email}</TableCell>
           <TableCell>{moment(candidate.createdAt).format('DD/MM/YYYY')}</TableCell>
           <TableCell>
             <Button variant="fab" color="secondary" aria-label="edit" className={classes.button} href={`/candidate/${candidate._id}`}>
@@ -92,6 +93,7 @@ class CandidateList extends Component {
           <TableRow>
             <TableCell>Candidate</TableCell>
             <TableCell>Job Title</TableCell>
+            <TableCell>Email</TableCell>
             <TableCell>Date Entry</TableCell>
             <TableCell></TableCell>
             <TableCell></TableCell>

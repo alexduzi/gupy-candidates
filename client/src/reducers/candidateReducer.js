@@ -2,6 +2,9 @@ import {
   FETCH_CANDIDATES,
   FETCH_CANDIDATES_ERROR,
   FETCH_CANDIDATES_LOADING,
+
+  FETCH_CANDIDATE,
+
   CANDIDATES_INSERT,
   CANDIDATES_INSERT_LOADING,
   CANDIDATES_INSERT_ERROR,
@@ -11,7 +14,19 @@ import {
   CANDIDATES_DELETE,
   CANDIDATES_DELETE_LOADING,
   CANDIDATES_DELETE_ERROR,
-  CANDIDATES_CANCEL
+  CANDIDATES_CANCEL,
+
+  EXPERIENCES_INSERT,
+  EXPERIENCES_INSERT_LOADING,
+  EXPERIENCES_INSERT_ERROR,
+
+  EXPERIENCES_UPDATE,
+  EXPERIENCES_UPDATE_LOADING,
+  EXPERIENCES_UPDATE_ERROR,
+
+  EXPERIENCES_DELETE,
+  EXPERIENCES_DELETE_LOADING,
+  EXPERIENCES_DELETE_ERROR
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -27,6 +42,18 @@ const INITIAL_STATE = {
   deleteLoading: false,
   deleteError: false,
   deleteErrorMessage: '',
+
+  experienceInsertLoading: false,
+  experienceInsertError: false,
+  experienceInsertErrorMessage: '',
+
+  experienceUpdateLoading: false,
+  experienceUpdateError: false,
+  experienceUpdateErrorMessage: '',
+
+  experienceDeleteLoading: false,
+  experienceDeleteError: false,
+  experienceDeleteErrorMessage: '',
 
   candidatesLoading: false,
   list: [],
@@ -84,9 +111,49 @@ export default function(state = INITIAL_STATE, action) {
 
       return { ...state, list: [], candidatesLoading: false };
 
+    case FETCH_CANDIDATE:
+
+      return { ...state, candidate: action.payload };
+
     case CANDIDATES_CANCEL:
 
       return { ...state, candidate: undefined };
+
+    case EXPERIENCES_INSERT:
+
+      return { ...state, experienceInsertLoading: false };
+
+    case EXPERIENCES_INSERT_LOADING:
+
+      return { ...state, experienceInsertLoading: true }
+
+    case EXPERIENCES_INSERT_ERROR:
+
+      return { ...state,  }
+
+    case EXPERIENCES_UPDATE:
+
+      return { ...state, experienceUpdateLoading: false };
+
+    case EXPERIENCES_UPDATE_LOADING:
+
+      return { ...state, experienceUpdateLoading: true }
+
+    case EXPERIENCES_UPDATE_ERROR:
+
+      return { ...state,  }
+
+    case EXPERIENCES_DELETE:
+
+      return { ...state, experienceDeleteLoading: false };
+
+    case EXPERIENCES_DELETE_LOADING:
+
+      return { ...state, experienceDeleteLoading: true }
+
+    case EXPERIENCES_DELETE_ERROR:
+
+      return { ...state,  }
 
     default:
       return state;

@@ -27,6 +27,7 @@ app.use(cors());
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
 require('./routes/candidateRoutes')(app);
+require('./routes/experienceRoutes')(app);
 
 if (['production', 'ci'].includes(process.env.NODE_ENV)) {
   app.use(express.static('client/build'));
